@@ -1,9 +1,8 @@
 'use client';
 
 import { Form, Formik } from 'formik';
-import { Wrapper } from './wrapper';
-import * as Yup from 'yup';
-import { TextField } from './inputFields';
+import { Wrapper } from '../shared/wrapper';
+import { TextField } from '../shared/inputFields';
 import { Box, Button } from '@chakra-ui/react';
 
 interface LoginProps {}
@@ -14,7 +13,6 @@ interface LoginProps {}
 
 const Login:React.FC<LoginProps> = ({}) => {
     return (
-        // <h1>In login page!</h1>
         <Wrapper>
             <Formik 
             initialValues={{ username: "", password: "" }} 
