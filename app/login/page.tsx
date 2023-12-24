@@ -6,19 +6,32 @@ import { TextField } from '../shared/inputFields';
 import { Box, Button } from '@chakra-ui/react';
 import * as Yup from 'yup';
 import { useMutation } from '@apollo/client';
-import { LoginDocument } from '../__generated__/graphql';
+import { IsLoggedInDocument, LoginDocument } from '../__generated__/graphql';
 import { toErrorMap } from '../lib/toErrorMap';
 import { useRouter } from 'next/navigation';
+
 
 interface LoginProps {}
 
 // form validations should be completed first 
 // form onsubmit should hit gql endpoint - should do by apollo client
 
+//graphql cache refetch queries works on active queries - i.e queries being used in current component
+//to update cache after mutation, its best to update the apollo cache directly
 const Login:React.FC<LoginProps> = ({}) => {
 
     const router = useRouter();
-    const [ login, {loading, error, data}] = useMutation(LoginDocument);
+    const [login] = useMutation(LoginDocument, {
+       update(cache,result) {
+            cache.writeQuery({
+                query: IsLoggedInDocument,
+                data: { isLoggedIn: {
+                    user: result.data?.login.user,
+                    errors: result.data?.login.errors
+                } }
+            })
+        }
+    });
 
     return (
         <Wrapper>
@@ -34,8 +47,9 @@ const Login:React.FC<LoginProps> = ({}) => {
                     options: {
                         username: values.username,
                         password: values.password
+                        },
                     }
-                }});
+                });
                 if(loginResponse.data?.login.errors) {
                     setErrors(toErrorMap(loginResponse.data.login.errors));
                     console.log(loginResponse.data.login.errors);
@@ -43,7 +57,7 @@ const Login:React.FC<LoginProps> = ({}) => {
                 else {
                     //user logged in and cookie stored in browser, route to '/' path for now
                     console.log(loginResponse.data?.login.user);
-                    router.push('/');
+                    router.push('/home');
                 }
             }}
             >

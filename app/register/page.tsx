@@ -50,7 +50,7 @@ const Register:React.FC<RegisterProps> = ({}) => {
                 } else {
                     // WORKS - user is created and routed to '/' path
                     console.log(registerResponse.data?.register.user);
-                    router.push('/');
+                    router.push('/login');
                 }
             }}>
                 {formik => (

@@ -1,0 +1,16 @@
+query getUserDetails($username: String!) {
+  getUserDetails(username: $username) {
+    errors {
+      field
+      message
+    }
+    user {
+      id
+      username
+      fname
+      lname
+      createdAt
+      updatedAt
+    }
+  }
+}
