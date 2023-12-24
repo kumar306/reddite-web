@@ -7,14 +7,17 @@ import { Box, Button } from '@chakra-ui/react';
 import * as Yup from 'yup';
 import { useMutation } from '@apollo/client';
 import { RegisterDocument } from '../__generated__/graphql';
+import { toErrorMap } from '../lib/toErrorMap';
+import { useRouter } from 'next/navigation';
 
 interface RegisterProps {}
 
 // form validations should be completed first 
 // form onsubmit should hit gql endpoint - should do by apollo client
 
-
 const Register:React.FC<RegisterProps> = ({}) => {
+    const router = useRouter();
+    const [ register, {loading, error, data} ] = useMutation(RegisterDocument);
     return (
         // <h1>In login page!</h1>
         <Wrapper>
@@ -28,14 +31,8 @@ const Register:React.FC<RegisterProps> = ({}) => {
                 confirmPassword: Yup.string().required('Confirm Password required')
                 .oneOf([Yup.ref('password')], 'Password and confirm password does not match')
             })}
-            validateOnBlur={true}
-            validateOnChange={false}
-            onSubmit={ async(values) => {
+            onSubmit={async (values, {setErrors, setStatus}) => {
                 console.log(values);
-
-                const [ register, {loading, error, data} ] = useMutation(RegisterDocument);
-
-                console.log('mutation data:' + data);
                 const registerResponse = await register({
                     variables: { options: {
                         fname: values.firstname,
@@ -46,6 +43,15 @@ const Register:React.FC<RegisterProps> = ({}) => {
                     }}
                 });
                 console.log(registerResponse);
+                if(registerResponse.data?.register.errors) {
+                    // register.errors is array of {field: '', message: ''}
+                    // convert it to an obj of {[field]:[message], ....}
+                    setErrors(toErrorMap(registerResponse.data.register.errors));
+                } else {
+                    // WORKS - user is created and routed to '/' path
+                    console.log(registerResponse.data?.register.user);
+                    router.push('/');
+                }
             }}>
                 {formik => (
                     <Form>
