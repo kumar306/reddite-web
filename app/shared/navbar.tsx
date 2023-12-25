@@ -1,9 +1,10 @@
 'use client';
 
-import { useQuery } from "@apollo/client";
-import { Box, Flex, Text } from "@chakra-ui/react";
-import { GetUserDetailsDocument, IsLoggedInDocument } from "../__generated__/graphql";
+import { useMutation, useQuery } from "@apollo/client";
+import { Alert, Box, Button, Flex, Text } from "@chakra-ui/react";
+import { GetUserDetailsDocument, IsLoggedInDocument, LogoutDocument } from "../__generated__/graphql";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 // if user logged in, username should show in top right with logout button
 // else if user not logged in, login and register buttons should show in top right
@@ -13,7 +14,17 @@ interface NavbarProps {}
 export const Navbar:React.FC<NavbarProps> = ({}) => {
 
     const { data, loading, error } = useQuery(IsLoggedInDocument); //query if user logged in
-    console.log(data);
+    const [logout] = useMutation(LogoutDocument);
+    const router = useRouter();
+    
+    const handleLogout = async() => {
+        const logoutResponse = await logout({
+            refetchQueries: [IsLoggedInDocument]
+        });  
+        console.log(logoutResponse.data?.logout);
+        router.push('/home');
+    }
+
     return (
         <>
         {data !== undefined ? (
@@ -26,7 +37,7 @@ export const Navbar:React.FC<NavbarProps> = ({}) => {
                 (
                     <Flex>     
                         <Text fontSize='md' mr={4}>Hello {data.isLoggedIn.user.username}</Text>
-                        <Link href={'/logout'}>Logout</Link>
+                        <Button size='md' color={'white'} bg={'red'} variant='ghost' onClick={handleLogout}>Logout</Button>
                     </Flex>) : 
                 (
                     <Flex>
