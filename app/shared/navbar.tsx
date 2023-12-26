@@ -1,8 +1,8 @@
 'use client';
 
-import { useMutation, useQuery } from "@apollo/client";
+import { ApolloQueryResult, FetchResult, useMutation, useQuery } from "@apollo/client";
 import { Alert, Box, Button, Flex, Text } from "@chakra-ui/react";
-import { GetUserDetailsDocument, IsLoggedInDocument, LogoutDocument } from "../__generated__/graphql";
+import { GetUserDetailsDocument, IsLoggedInDocument, IsLoggedInQuery, LogoutDocument, LogoutMutation } from "../__generated__/graphql";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -10,13 +10,14 @@ import { useRouter } from "next/navigation";
 // else if user not logged in, login and register buttons should show in top right
 // check if user logged in by using getUserDetails query - checks for userId in session coming from cookie and queries user table with that id
 
-interface NavbarProps {}
-export const Navbar:React.FC<NavbarProps> = ({}) => {
+interface NavbarProps {
+    loggedInUser: ApolloQueryResult<IsLoggedInQuery>
+}
+export const Navbar:React.FC<NavbarProps> = ({ loggedInUser }) => {
 
-    const { data, loading, error } = useQuery(IsLoggedInDocument); //query if user logged in
+    // const { data, loading, error } = useQuery(IsLoggedInDocument); //query if user logged in
     const [logout] = useMutation(LogoutDocument);
     const router = useRouter();
-    
     const handleLogout = async() => {
         const logoutResponse = await logout({
             refetchQueries: [IsLoggedInDocument]
@@ -27,16 +28,15 @@ export const Navbar:React.FC<NavbarProps> = ({}) => {
 
     return (
         <>
-        {data !== undefined ? (
         <Flex bg="tomato" color={"white"} p={4}>
             <Box>
                 <Text fontSize='lg'>REDDITE</Text>
             </Box>
             <Box ml="auto">
-                { data?.isLoggedIn.user ? 
+                { loggedInUser.data?.isLoggedIn.user ? 
                 (
                     <Flex>     
-                        <Text fontSize='md' mr={4}>Hello {data.isLoggedIn.user.username}</Text>
+                        <Text fontSize='md' mr={4}>Hello {loggedInUser.data.isLoggedIn.user.username}</Text>
                         <Button size='md' color={'white'} bg={'red'} variant='ghost' onClick={handleLogout}>Logout</Button>
                     </Flex>) : 
                 (
@@ -51,7 +51,6 @@ export const Navbar:React.FC<NavbarProps> = ({}) => {
                 )}
             </Box>
         </Flex>
-        ): null}
         </>
     )
 }

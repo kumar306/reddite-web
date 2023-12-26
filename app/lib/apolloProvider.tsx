@@ -36,3 +36,4 @@ export function ApolloProvider({children}:React.PropsWithChildren) {
 }   
 
 //ssr multipart link - helps in performance - ssr data fetching and caching
+// this is for all client component queries and mutations in general - when doing useMutation, useQuery
