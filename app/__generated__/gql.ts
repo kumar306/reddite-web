@@ -14,9 +14,11 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 const documents = {
     "fragment userFields on User {\n  id\n  username\n}": types.UserFieldsFragmentDoc,
-    "mutation Login($options: LoginInput!) {\n  login(options: $options) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}": types.LoginDocument,
+    "mutation ChangePassword($options: PasswordResetInput!) {\n  changePassword(options: $options) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      email\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}": types.ChangePasswordDocument,
+    "mutation ForgotPassword($email: String!) {\n  forgotPassword(email: $email)\n}": types.ForgotPasswordDocument,
+    "mutation Login($options: LoginInput!) {\n  login(options: $options) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      email\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}": types.LoginDocument,
     "mutation Logout {\n  logout\n}": types.LogoutDocument,
-    "mutation Register($options: RegisterInput!) {\n  register(options: $options) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}": types.RegisterDocument,
+    "mutation Register($options: RegisterInput!) {\n  register(options: $options) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      email\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}": types.RegisterDocument,
     "query getAllPosts {\n  getAllPosts {\n    id\n    title\n    createdAt\n    updatedAt\n  }\n}": types.GetAllPostsDocument,
     "query getUserDetails($username: String!) {\n  getUserDetails(username: $username) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}": types.GetUserDetailsDocument,
     "query isLoggedIn {\n  isLoggedIn {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}": types.IsLoggedInDocument,
@@ -43,7 +45,15 @@ export function gql(source: "fragment userFields on User {\n  id\n  username\n}"
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "mutation Login($options: LoginInput!) {\n  login(options: $options) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}"): (typeof documents)["mutation Login($options: LoginInput!) {\n  login(options: $options) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}"];
+export function gql(source: "mutation ChangePassword($options: PasswordResetInput!) {\n  changePassword(options: $options) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      email\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}"): (typeof documents)["mutation ChangePassword($options: PasswordResetInput!) {\n  changePassword(options: $options) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      email\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "mutation ForgotPassword($email: String!) {\n  forgotPassword(email: $email)\n}"): (typeof documents)["mutation ForgotPassword($email: String!) {\n  forgotPassword(email: $email)\n}"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "mutation Login($options: LoginInput!) {\n  login(options: $options) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      email\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}"): (typeof documents)["mutation Login($options: LoginInput!) {\n  login(options: $options) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      email\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -51,7 +61,7 @@ export function gql(source: "mutation Logout {\n  logout\n}"): (typeof documents
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "mutation Register($options: RegisterInput!) {\n  register(options: $options) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}"): (typeof documents)["mutation Register($options: RegisterInput!) {\n  register(options: $options) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}"];
+export function gql(source: "mutation Register($options: RegisterInput!) {\n  register(options: $options) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      email\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}"): (typeof documents)["mutation Register($options: RegisterInput!) {\n  register(options: $options) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      email\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

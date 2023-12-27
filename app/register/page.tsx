@@ -22,27 +22,27 @@ const Register:React.FC<RegisterProps> = ({}) => {
         // <h1>In login page!</h1>
         <Wrapper>
             <Formik 
-            initialValues={{ username: "", password: "", firstname: "", lastname: "", confirmPassword: "" }} 
+            initialValues={{ username: "", password: "", email: "", firstname: "", lastname: "", confirmPassword: "" }} 
             validationSchema={Yup.object({
                 firstname: Yup.string().max(15, 'Max 15 characters').required(),
                 lastname: Yup.string().max(15, 'Max 15 characters').required(),
                 username: Yup.string().max(20, 'Max 20 characters in username').required('Username required'),
+                email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
                 password: Yup.string().min(6, 'Minimum 6 characters allowed').required('Password required'),
                 confirmPassword: Yup.string().required('Confirm Password required')
                 .oneOf([Yup.ref('password')], 'Password and confirm password does not match')
             })}
             onSubmit={async (values, {setErrors, setStatus}) => {
-                console.log(values);
                 const registerResponse = await register({
                     variables: { options: {
                         fname: values.firstname,
                         lname: values.lastname,
                         username: values.username,
+                        email: values.email,
                         password: values.password,
                         confirmPassword: values.confirmPassword
                     }}
                 });
-                console.log(registerResponse);
                 if(registerResponse.data?.register.errors) {
                     // register.errors is array of {field: '', message: ''}
                     // convert it to an obj of {[field]:[message], ....}
@@ -65,6 +65,9 @@ const Register:React.FC<RegisterProps> = ({}) => {
                         <TextField name="username" label="Username"></TextField>
                         </Box>
                         <Box py={1}>
+                        <TextField name="email" label="Email"></TextField>
+                        </Box>
+                        <Box py={1}>
                         <TextField name="password" label="Password" type="password"></TextField>
                         </Box>
                         <Box py={1}>
@@ -74,7 +77,7 @@ const Register:React.FC<RegisterProps> = ({}) => {
                         <Button 
                         type="submit" 
                         colorScheme='blue' 
-                        loadingText="Logging in.."
+                        loadingText="Registering..."
                         disabled={!formik.isValid || !formik.dirty}>
                             Register
                         </Button>

@@ -15,44 +15,57 @@ interface NavbarProps {
 }
 export const Navbar:React.FC<NavbarProps> = ({ loggedInUser }) => {
 
-    // const { data, loading, error } = useQuery(IsLoggedInDocument); //query if user logged in
+    const { data, loading, error } = useQuery(IsLoggedInDocument); //query if user logged in
+    console.log(data);
     const [logout] = useMutation(LogoutDocument);
     const router = useRouter();
     const handleLogout = async() => {
         const logoutResponse = await logout({
             refetchQueries: [IsLoggedInDocument]
         });  
+        console.log(loggedInUser.data.isLoggedIn.user);
         console.log(logoutResponse.data?.logout);
         router.push('/home');
     }
 
     return (
         <>
-        <Flex bg="tomato" color={"white"} p={4}>
-            <Box>
-                <Text fontSize='lg'>REDDITE</Text>
-            </Box>
-            <Box ml="auto">
-                { loggedInUser.data?.isLoggedIn.user ? 
-                (
-                    <Flex>     
-                        <Text fontSize='md' mr={4}>Hello {loggedInUser.data.isLoggedIn.user.username}</Text>
-                        <Button size='md' color={'white'} bg={'red'} variant='ghost' onClick={handleLogout}>Logout</Button>
-                    </Flex>) : 
-                (
-                    <Flex>
-                        <Box mr={2}>
-                            <Link href={'/login'}>Login</Link>
-                        </Box>
-                        <Box>
-                            <Link href={'/register'}>Register</Link>
+        {data && (
+             <Flex bg="tomato" color={"white"} p={4}>
+             <Box>
+                 <Text fontSize='lg'>REDDITE</Text>
+             </Box>
+             <Box ml="auto">
+                 { data?.isLoggedIn.user ? 
+                 (
+                     <Flex>     
+                         <Text fontSize='md' mr={4}>Hello {data.isLoggedIn.user.username}</Text>
+                         <Button size='md' color={'white'} bg={'red'} variant='ghost' onClick={handleLogout}>Logout</Button>
+                     </Flex>) : 
+                 (
+                     <Flex>
+                         <Box mr={2}>
+                             <Link href={'/login'}>Login</Link>
                          </Box>
-                    </Flex>
-                )}
-            </Box>
-        </Flex>
+                         <Box>
+                             <Link href={'/register'}>Register</Link>
+                          </Box>
+                     </Flex>
+                 )}
+             </Box>
+         </Flex>
+        )}
+       
         </>
     )
 }
 
 // div follows flex of parent container by default - if another box is created
+// ssr query was done with getClient().query()
+// results came in nextjs server
+// cache not getting updated when using useMutation, refetch queries
+
+// but if init query done with useQuery client side, then cache got updated after useMutation refetch queries
+// this is because i am creating a new client with separate cache with each SSR req
+// but for useQuery - i am having a single client with single cache
+// so for each SSR req we do, run useQuery for that as well - so cache gets updated
