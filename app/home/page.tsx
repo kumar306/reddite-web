@@ -9,11 +9,8 @@ import { setContext } from "@apollo/client/link/context";
 
 export default async function Page() {
 
-  
-
   // apollo query goes from next js server directly (SERVER COMPONENT) instead of reaching browser and then browser making a graphql request
   
-
   const loggedInUser = await getClient().query({
     query: IsLoggedInDocument
   })

@@ -3,7 +3,7 @@
 import { Form, Formik } from 'formik';
 import { Wrapper } from '../shared/wrapper';
 import { TextField } from '../shared/inputFields';
-import { Box, Button } from '@chakra-ui/react';
+import { Box, Button, Link } from '@chakra-ui/react';
 import * as Yup from 'yup';
 import { useMutation } from '@apollo/client';
 import { IsLoggedInDocument, LoginDocument } from '../__generated__/graphql';
@@ -36,16 +36,15 @@ const Login:React.FC<LoginProps> = ({}) => {
     return (
         <Wrapper>
             <Formik 
-            initialValues={{ username: "", password: "" }} 
+            initialValues={{ usernameOrEmail: "", password: "" }} 
             validationSchema={Yup.object({
-                username: Yup.string().max(20, 'Max 20 characters in username').required('Username required'),
+                usernameOrEmail: Yup.string().max(30, 'Max 30 characters in username').required('Username or Email required'),
                 password: Yup.string().required('Password required')
             })}
             onSubmit={async (values, {setErrors}) => {
-                console.log(values);
                 const loginResponse = await login({variables: {
                     options: {
-                        username: values.username,
+                        usernameOrEmail: values.usernameOrEmail,
                         password: values.password
                         },
                     }
@@ -64,7 +63,7 @@ const Login:React.FC<LoginProps> = ({}) => {
                 {formik => (
                     <Form>
                         <Box py={3}>
-                        <TextField name="username" label="username"></TextField>
+                        <TextField name="usernameOrEmail" label="username"></TextField>
                         </Box>
                         <Box py={3}>
                         <TextField name="password" label="password" type="password"></TextField>
@@ -73,6 +72,9 @@ const Login:React.FC<LoginProps> = ({}) => {
                         <Button type="submit" colorScheme='blue' loadingText="Logging in..">
                             Login
                         </Button>
+                        <Box py={3}>
+                            <Link href="/forgot-password">Forgot Password? Click here</Link>
+                        </Box>
                         </Box>
                     </Form>
                 )}
