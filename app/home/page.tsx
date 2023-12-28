@@ -1,11 +1,8 @@
 // home/page.tsx
-import { Navbar } from "../shared/navbar";
-import { GetAllPostsDocument, IsLoggedInDocument, LogoutDocument } from "../__generated__/graphql";
+import Link from "next/link";
+import { GetAllPostsDocument, IsLoggedInDocument } from "../__generated__/graphql";
 import { getClient } from "../lib/apollo-client";
-import { request } from "http";
-import {cookies, headers} from 'next/headers';
-import { ApolloClient, HttpLink, InMemoryCache, from } from "@apollo/client";
-import { setContext } from "@apollo/client/link/context";
+import Layout from "../shared/layout";
 
 export default async function Page() {
 
@@ -23,8 +20,9 @@ export default async function Page() {
   console.log(loggedInUser.data);
 
   return (
-    <>
-    <Navbar loggedInUser={loggedInUser}></Navbar>
+    <Layout>
+      <Link href="/create-post">Create Post</Link>
+      <br></br>
     { !postsData.data ? (
       <p>Loading</p>
     ): (
@@ -34,6 +32,6 @@ export default async function Page() {
         ))}
       </ul>
     )}
-    </>
+    </Layout>
   )
 }

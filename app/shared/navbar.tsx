@@ -11,9 +11,9 @@ import { useRouter } from "next/navigation";
 // check if user logged in by using getUserDetails query - checks for userId in session coming from cookie and queries user table with that id
 
 interface NavbarProps {
-    loggedInUser: ApolloQueryResult<IsLoggedInQuery>
+    // loggedInUser: ApolloQueryResult<IsLoggedInQuery>
 }
-export const Navbar:React.FC<NavbarProps> = ({ loggedInUser }) => {
+export const Navbar:React.FC<NavbarProps> = () => {
 
     const { data, loading, error } = useQuery(IsLoggedInDocument); //query if user logged in
     const [logout] = useMutation(LogoutDocument);
@@ -28,7 +28,7 @@ export const Navbar:React.FC<NavbarProps> = ({ loggedInUser }) => {
     return (
         <>
         {data && (
-             <Flex bg="tomato" color={"white"} p={4}>
+             <Flex bg="teal" color={"white"} p={4} zIndex={1} top={0}>
              <Box>
                  <Text fontSize='lg'>REDDITE</Text>
              </Box>
