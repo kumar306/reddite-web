@@ -36,9 +36,8 @@ export type Mutation = {
   login: UserResponse;
   logout: Scalars['Boolean']['output'];
   register: UserResponse;
-  updatePost?: Maybe<Post>;
+  updatePost: Post;
 };
-
 
 export type MutationChangePasswordArgs = {
   options: PasswordResetInput;
@@ -58,6 +57,8 @@ export type MutationDeletePostArgs = {
 export type MutationForgotPasswordArgs = {
   email: Scalars['String']['input'];
 };
+
+
 
 
 export type MutationLoginArgs = {
@@ -80,6 +81,7 @@ export type PasswordResetInput = {
   newPassword: Scalars['String']['input'];
   token: Scalars['String']['input'];
 };
+
 
 export type Post = {
   __typename?: 'Post';

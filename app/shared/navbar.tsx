@@ -66,3 +66,11 @@ export const Navbar:React.FC<NavbarProps> = () => {
 // this is because i am creating a new client with separate cache with each SSR req
 // but for useQuery - i am having a single client with single cache
 // so for each SSR req we do, run useQuery for that as well - so cache gets updated
+// ssr query was done with getClient().query()
+// results came in nextjs server
+// cache not getting updated when using useMutation, refetch queries
+
+// but if init query done with useQuery client side, then cache got updated after useMutation refetch queries
+// this is because i am creating a new client with separate cache with each SSR req
+// but for useQuery - i am having a single client with single cache
+// so for each SSR req we do, run useQuery for that as well - so cache gets updated
