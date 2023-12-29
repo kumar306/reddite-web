@@ -35,6 +35,8 @@ const createPost:React.FC<CreatePostProps> = ({}) => {
                             }
                         }
                     })
+
+                    console.log(createPostResponse);
                 }}
                 >
                     {formik => (

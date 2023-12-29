@@ -3,6 +3,15 @@ mutation CreatePost($input: PostInput!) {
     id
     title
     text
+    author {
+      id
+      username
+      email
+      fname
+      lname
+      createdAt
+      updatedAt
+    }
     points
     createdAt
     updatedAt

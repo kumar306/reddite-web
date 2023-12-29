@@ -1,7 +1,18 @@
-query getAllPosts {
+query Query {
   getAllPosts {
     id
     title
+    text
+    author {
+      id
+      username
+      email
+      fname
+      lname
+      createdAt
+      updatedAt
+    }
+    points
     createdAt
     updatedAt
   }

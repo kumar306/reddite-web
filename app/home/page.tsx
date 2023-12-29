@@ -22,13 +22,19 @@ export default async function Page() {
   return (
     <Layout>
       <Link href="/create-post">Create Post</Link>
+      <hr></hr>
       <br></br>
     { !postsData.data ? (
       <p>Loading</p>
     ): (
       <ul>
         {postsData.data.getAllPosts.map(post => (
-          <li key={post.id}>{post.title}</li>
+          <li key={post.id}>
+            {post.title}
+            <br></br>
+            <p>{post.text}</p>
+          </li>
+          
         ))}
       </ul>
     )}
