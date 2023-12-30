@@ -1,5 +1,5 @@
-query Query {
-  getAllPosts {
+query GetAllPosts($options: PaginationInput!) {
+  getAllPosts(options: $options) {
     id
     title
     text

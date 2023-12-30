@@ -5,16 +5,28 @@ import { Formik, Form } from "formik";
 import { TextAreaField, TextField } from "../shared/inputFields";
 import { Wrapper } from "../shared/wrapper";
 import * as Yup from 'yup';
-import { CreatePostDocument } from "../__generated__/graphql";
+import { CreatePostDocument, GetAllPostsDocument } from "../__generated__/graphql";
 import { useMutation } from "@apollo/client";
 import Layout from "../shared/layout";
 import { checkIsAuth } from "../lib/checkIsAuth";
+import { useRouter } from "next/navigation";
 
 interface CreatePostProps {}
 
 const createPost:React.FC<CreatePostProps> = ({}) => {
 
-    const [createPost] = useMutation(CreatePostDocument);
+    const router = useRouter();
+    const [createPost] = useMutation(CreatePostDocument, {
+        update(cache,result) {
+            cache.modify({
+                fields: {
+                    GetAllPostsDocument: (prevPosts, modifier) => {
+                        return [result.data?.createPost]
+                    }
+                }
+            })
+        }
+    });
     checkIsAuth();
 
     return (
@@ -37,6 +49,8 @@ const createPost:React.FC<CreatePostProps> = ({}) => {
                     })
 
                     console.log(createPostResponse);
+                    router.push('/home');
+                    
                 }}
                 >
                     {formik => (

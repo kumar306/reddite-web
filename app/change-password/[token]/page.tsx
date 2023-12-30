@@ -10,6 +10,7 @@ import { Formik, Form } from "formik";
 import Link from "next/link";
 import { useState } from "react";
 import * as Yup from 'yup';
+import { useSearchParams } from "next/navigation";
 
 interface ChangePasswordProps {
     params: {
@@ -18,7 +19,7 @@ interface ChangePasswordProps {
 }
 
 const ChangePassword:React.FC<ChangePasswordProps> = ({params}: { params: { token: string } }) => {
-    
+    const searchParams = useSearchParams();
     const [completed, setCompleted] = useState(false);
     const [tokenError, setTokenError] = useState('');
     const [changePassword] = useMutation(ChangePasswordDocument);

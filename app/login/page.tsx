@@ -8,7 +8,7 @@ import * as Yup from 'yup';
 import { useMutation } from '@apollo/client';
 import { IsLoggedInDocument, LoginDocument } from '../__generated__/graphql';
 import { toErrorMap } from '../lib/toErrorMap';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 
 interface LoginProps {}
@@ -19,7 +19,7 @@ interface LoginProps {}
 //graphql cache refetch queries works on active queries - i.e queries being used in current component
 //to update cache after mutation, its best to update the apollo cache directly
 const Login:React.FC<LoginProps> = ({}) => {
-
+    const searchParams = useSearchParams(); //to read query params
     const router = useRouter();
     const [login] = useMutation(LoginDocument, {
        update(cache,result) {
@@ -56,7 +56,8 @@ const Login:React.FC<LoginProps> = ({}) => {
                 else {
                     //user logged in and cookie stored in browser, route to '/' path for now
                     console.log(loginResponse.data?.login.user);
-                    router.push('/home');
+                    if(searchParams.get('next')) router.push(searchParams.get('next') as string);
+                    else router.push('/home');
                 }
             }}
             >
