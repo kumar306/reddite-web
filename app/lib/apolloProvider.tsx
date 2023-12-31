@@ -36,7 +36,30 @@ const makeClient = ():NextSSRApolloClient<NormalizedCacheObject> => {
 
       
     return new NextSSRApolloClient({
-        cache: new NextSSRInMemoryCache(),
+        cache: new NextSSRInMemoryCache({
+          typePolicies: {
+            Query: {
+              fields: {
+                getAllPosts: {
+                  keyArgs: false,
+                  merge(existing = { __typename: "PostsOutput", posts: [], hasMore: true}, incoming) {
+                    // this fn is called when writing data into cache - we are modifying the default write behaviour
+                    // when query called with diff args, apollo cache stores in diff loc, doesnt overwrite
+                    // so by calling merge, we are combining all paginated results into one big result in cache
+                    
+                    // object returned by merge should be of same type returned by graphql query
+
+                    return { 
+                        __typename: "PostsOutput",
+                        posts: [...existing.posts, ...incoming.posts],
+                        hasMore: incoming.hasMore
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }),
         link: 
             typeof window === "undefined" ? 
             ApolloLink.from([

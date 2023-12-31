@@ -4,79 +4,95 @@
 import Link from "next/link";
 import { GetAllPostsDocument, IsLoggedInDocument } from "../__generated__/graphql";
 import Layout from "../shared/layout";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@apollo/client";
-import { Box, Button } from "@chakra-ui/react";
+import { Box, Button, Flex, Text } from "@chakra-ui/react";
+import { Card, CardBody, CardFooter, CardHeader } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
+import { checkIsAuth } from "../lib/checkIsAuth";
 
 interface HomeProps { }
 
 const Home:React.FC<HomeProps> = ({}) => {
 
   // apollo query goes from next js server directly (SERVER COMPONENT) instead of reaching browser and then browser making a graphql request
-  const [skip, setSkip] = useState(0);
-  const [limit, setLimit] = useState(6);
-  const [postsNum, setPostsNum] = useState(0);
+  const skip = useRef(0);
+  const limit = useRef(10);
+  // use useRef when we want to store a value but doesnt cause re-render on component update
+  // dont use let/const as those variables values dont persist across re-renders
 
-  const {data: isLoggedInData, loading: isLoggedInLoading, error: isLoggedInError} = useQuery(IsLoggedInDocument);
-  const {data: getPostsData, loading: getPostsLoading, error: getPostsError } = useQuery(GetAllPostsDocument, {
+  const router = useRouter();
+
+  const {data: getPostsData, loading: getPostsLoading, error: getPostsError, fetchMore: fetchMorePosts } = useQuery(GetAllPostsDocument, {
     variables: {
       options: {
-        skip,
-        limit
+        skip: skip.current,
+        limit: limit.current
       }
     },
-    onCompleted: (getPostsData) => {
-        setPostsNum(getPostsData.getAllPosts.length);
+    onCompleted: (data) => {
+      if(skip.current == 0) skip.current += limit.current
     }
   });
-
  
-  const nextPage = () => {
-    setSkip(skip+5);
+  // useEffect init run - triggered on getPostsData change
+  // on data retrieval, setSkip run - triggers re-render
+  // useQuery hook run again with next skip - data changes - useEffect run which updates skip
+  // triggers re-render and keeps going..
+  // so use 'useRef' hook to prevent re-rendering of value that persists across renders
+
+  const routeToCreatePost = () => {
+    router.push('/create-post');
   }
 
-  const prevPage = () => {
-    setSkip(skip-5);
-  }
+  checkIsAuth();
   
-  console.log(getPostsData?.getAllPosts)
-
   return (
     <Layout>
-      <Link href="/create-post">Create Post</Link>
-      <hr></hr>
-      <br></br>
-    { !getPostsData?.getAllPosts ? (
+      <Flex>
+        <Box>
+          <Text as='b' fontSize='4xl'>REDDITE</Text>
+        </Box>
+        <Box ml="auto">
+          <Button onClick={routeToCreatePost}>Create Post</Button>
+        </Box>
+      </Flex>
+    
+    { !getPostsData?.getAllPosts.posts ? (
       <p>Loading</p>
     ): (
       <>
       <ul>
-        {getPostsData?.getAllPosts.map((post,id) => {
-          console.log(post);
-          console.log(id);
-          id+=1;
-          if(id<limit) {
-              id++;
+        {getPostsData?.getAllPosts.posts.map((post) => {    
               return (
-              <li key={post.id}>
-                {post.title}
-                <br></br>
-                <p>{post.text}</p>
-              </li> 
-              ) 
-          }
-          else return null;
+                <Card key={post.id} my={3}>
+                  <CardHeader as='b'>{post.title}</CardHeader>
+                <CardBody>
+                  <Text>{post.textSlice}...</Text>
+                </CardBody>
+              </Card>
+            ) 
           }
         )}
       </ul>
       <br></br>
-      { postsNum == limit ? (
-           <Box py={4}>
-           <Button onClick={nextPage}>Next Page</Button>
+      { getPostsData?.getAllPosts.hasMore == true ? (
+           <Box py={4} textAlign={'center'}>
+           <Button onClick={async() => {        
+            await fetchMorePosts({
+            variables: {
+                options: {
+                  skip: skip.current,
+                  limit: limit.current,
+                }
+              },
+           });
+           skip.current = skip.current + limit.current;
+           console.log(getPostsData.getAllPosts);
+          }}
+          >Load More</Button>
          </Box>
-      ) : <Box py={4}>
-          <Button onClick={prevPage}>Previous Page</Button>
-        </Box>}
+      ): null}
       </>
     )}
     </Layout>
