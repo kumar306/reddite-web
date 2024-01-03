@@ -5,8 +5,8 @@ import { Formik, Form } from "formik";
 import { TextAreaField, TextField } from "../shared/inputFields";
 import { Wrapper } from "../shared/wrapper";
 import * as Yup from 'yup';
-import { CreatePostDocument, GetAllPostsDocument } from "../__generated__/graphql";
-import { useMutation } from "@apollo/client";
+import { CreatePostDocument, GetAllPostsDocument, Post } from "../__generated__/graphql";
+import { useMutation, useQuery } from "@apollo/client";
 import Layout from "../shared/layout";
 import { checkIsAuth } from "../lib/checkIsAuth";
 import { useRouter } from "next/navigation";
@@ -16,17 +16,7 @@ interface CreatePostProps {}
 const createPost:React.FC<CreatePostProps> = ({}) => {
 
     const router = useRouter();
-    const [createPost] = useMutation(CreatePostDocument, {
-        update(cache,result) {
-            cache.modify({
-                fields: {
-                    GetAllPostsDocument: (prevPosts, modifier) => {
-                        return [result.data?.createPost]
-                    }
-                }
-            })
-        }
-    });
+    const [createPost] = useMutation(CreatePostDocument);
     checkIsAuth();
 
     return (
@@ -45,7 +35,9 @@ const createPost:React.FC<CreatePostProps> = ({}) => {
                                 title: values.title,
                                 text: values.text
                             }
-                        }
+                        },
+                        refetchQueries: [GetAllPostsDocument] 
+                        //only active queries can be refetched i.e which client has queried gql server and storing in its cache
                     })
 
                     console.log(createPostResponse);

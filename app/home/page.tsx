@@ -10,6 +10,7 @@ import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import { Card, CardBody, CardFooter, CardHeader } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { checkIsAuth } from "../lib/checkIsAuth";
+import { Vote } from "./vote";
 
 interface HomeProps { }
 
@@ -31,6 +32,7 @@ const Home:React.FC<HomeProps> = ({}) => {
       }
     },
     onCompleted: (data) => {
+      console.log(getPostsData);
       if(skip.current == 0) skip.current += limit.current
     }
   });
@@ -66,10 +68,17 @@ const Home:React.FC<HomeProps> = ({}) => {
         {getPostsData?.getAllPosts.posts.map((post) => {    
               return (
                 <Card key={post.id} my={3}>
-                  <CardHeader as='b'>{post.title}</CardHeader>
-                <CardBody>
-                  <Text>{post.textSlice}...</Text>
-                </CardBody>
+                  <Flex> 
+                    <Vote post={post}></Vote>
+                    <Box m={2}>
+                      <CardHeader as='b'>{post.title}</CardHeader>                  
+                      <CardBody>
+                        <Text fontSize="sm">Posted by {post.author.username}</Text>
+                        <br></br>
+                        <Text>{post.textSlice}...</Text>
+                      </CardBody>
+                    </Box>
+                  </Flex>
               </Card>
             ) 
           }
