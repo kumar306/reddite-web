@@ -1,0 +1,11 @@
+fragment PostFields on Post {
+    id
+    title
+    author {
+       ...UserFields
+    }
+    points
+    createdAt
+    updatedAt
+    textSlice
+}

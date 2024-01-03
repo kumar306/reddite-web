@@ -13,16 +13,18 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-    "fragment userFields on User {\n  id\n  username\n}": types.UserFieldsFragmentDoc,
+    "fragment FieldErrors on FieldError {\n  field\n  message\n}": types.FieldErrorsFragmentDoc,
+    "fragment PostFields on Post {\n  id\n  title\n  author {\n    ...UserFields\n  }\n  points\n  createdAt\n  updatedAt\n  textSlice\n}": types.PostFieldsFragmentDoc,
+    "fragment UserFields on User {\n  id\n  username\n  email\n  fname\n  lname\n  createdAt\n  updatedAt\n}": types.UserFieldsFragmentDoc,
     "mutation ChangePassword($options: PasswordResetInput!) {\n  changePassword(options: $options) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      email\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}": types.ChangePasswordDocument,
     "mutation CreatePost($input: PostInput!) {\n  createPost(input: $input) {\n    id\n    title\n    text\n    author {\n      id\n      username\n      email\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n    points\n    createdAt\n    updatedAt\n  }\n}": types.CreatePostDocument,
     "mutation ForgotPassword($email: String!) {\n  forgotPassword(email: $email)\n}": types.ForgotPasswordDocument,
     "mutation Login($options: LoginInput!) {\n  login(options: $options) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      email\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}": types.LoginDocument,
     "mutation Logout {\n  logout\n}": types.LogoutDocument,
     "mutation Register($options: RegisterInput!) {\n  register(options: $options) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      email\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}": types.RegisterDocument,
-    "query GetAllPosts($options: PaginationInput!) {\n  getAllPosts(options: $options) {\n    posts {\n      id\n      title\n      author {\n        id\n        username\n        email\n        fname\n        lname\n        createdAt\n        updatedAt\n      }\n      points\n      createdAt\n      updatedAt\n      textSlice\n    }\n    hasMore\n  }\n}": types.GetAllPostsDocument,
-    "query getUserDetails($username: String!) {\n  getUserDetails(username: $username) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}": types.GetUserDetailsDocument,
-    "query isLoggedIn {\n  isLoggedIn {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}": types.IsLoggedInDocument,
+    "query GetAllPosts($options: PaginationInput!) {\n  getAllPosts(options: $options) {\n    posts {\n      ...PostFields\n    }\n    hasMore\n  }\n}": types.GetAllPostsDocument,
+    "query getUserDetails($username: String!) {\n  getUserDetails(username: $username) {\n    errors {\n      ...FieldErrors\n    }\n    user {\n      ...UserFields\n    }\n  }\n}": types.GetUserDetailsDocument,
+    "query isLoggedIn {\n  isLoggedIn {\n    errors {\n      ...FieldErrors\n    }\n    user {\n      ...UserFields\n    }\n  }\n}": types.IsLoggedInDocument,
 };
 
 /**
@@ -42,7 +44,15 @@ export function gql(source: string): unknown;
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "fragment userFields on User {\n  id\n  username\n}"): (typeof documents)["fragment userFields on User {\n  id\n  username\n}"];
+export function gql(source: "fragment FieldErrors on FieldError {\n  field\n  message\n}"): (typeof documents)["fragment FieldErrors on FieldError {\n  field\n  message\n}"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "fragment PostFields on Post {\n  id\n  title\n  author {\n    ...UserFields\n  }\n  points\n  createdAt\n  updatedAt\n  textSlice\n}"): (typeof documents)["fragment PostFields on Post {\n  id\n  title\n  author {\n    ...UserFields\n  }\n  points\n  createdAt\n  updatedAt\n  textSlice\n}"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "fragment UserFields on User {\n  id\n  username\n  email\n  fname\n  lname\n  createdAt\n  updatedAt\n}"): (typeof documents)["fragment UserFields on User {\n  id\n  username\n  email\n  fname\n  lname\n  createdAt\n  updatedAt\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -70,15 +80,15 @@ export function gql(source: "mutation Register($options: RegisterInput!) {\n  re
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "query GetAllPosts($options: PaginationInput!) {\n  getAllPosts(options: $options) {\n    posts {\n      id\n      title\n      author {\n        id\n        username\n        email\n        fname\n        lname\n        createdAt\n        updatedAt\n      }\n      points\n      createdAt\n      updatedAt\n      textSlice\n    }\n    hasMore\n  }\n}"): (typeof documents)["query GetAllPosts($options: PaginationInput!) {\n  getAllPosts(options: $options) {\n    posts {\n      id\n      title\n      author {\n        id\n        username\n        email\n        fname\n        lname\n        createdAt\n        updatedAt\n      }\n      points\n      createdAt\n      updatedAt\n      textSlice\n    }\n    hasMore\n  }\n}"];
+export function gql(source: "query GetAllPosts($options: PaginationInput!) {\n  getAllPosts(options: $options) {\n    posts {\n      ...PostFields\n    }\n    hasMore\n  }\n}"): (typeof documents)["query GetAllPosts($options: PaginationInput!) {\n  getAllPosts(options: $options) {\n    posts {\n      ...PostFields\n    }\n    hasMore\n  }\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "query getUserDetails($username: String!) {\n  getUserDetails(username: $username) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}"): (typeof documents)["query getUserDetails($username: String!) {\n  getUserDetails(username: $username) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}"];
+export function gql(source: "query getUserDetails($username: String!) {\n  getUserDetails(username: $username) {\n    errors {\n      ...FieldErrors\n    }\n    user {\n      ...UserFields\n    }\n  }\n}"): (typeof documents)["query getUserDetails($username: String!) {\n  getUserDetails(username: $username) {\n    errors {\n      ...FieldErrors\n    }\n    user {\n      ...UserFields\n    }\n  }\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "query isLoggedIn {\n  isLoggedIn {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}"): (typeof documents)["query isLoggedIn {\n  isLoggedIn {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}"];
+export function gql(source: "query isLoggedIn {\n  isLoggedIn {\n    errors {\n      ...FieldErrors\n    }\n    user {\n      ...UserFields\n    }\n  }\n}"): (typeof documents)["query isLoggedIn {\n  isLoggedIn {\n    errors {\n      ...FieldErrors\n    }\n    user {\n      ...UserFields\n    }\n  }\n}"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};

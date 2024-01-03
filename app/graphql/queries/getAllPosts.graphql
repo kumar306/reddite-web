@@ -1,21 +1,7 @@
 query GetAllPosts($options: PaginationInput!) {
   getAllPosts(options: $options) {
     posts {
-      id
-      title
-      author {
-        id
-        username
-        email
-        fname
-        lname
-        createdAt
-        updatedAt
-      }
-      points
-      createdAt
-      updatedAt
-      textSlice
+      ...PostFields
     }
     hasMore
   }

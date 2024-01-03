@@ -1,4 +1,9 @@
-fragment userFields on User {
+fragment UserFields on User {
     id
     username
+    email
+    fname
+    lname
+    createdAt
+    updatedAt
 }

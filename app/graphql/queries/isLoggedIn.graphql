@@ -1,16 +1,10 @@
 query isLoggedIn {
   isLoggedIn {
     errors {
-      field
-      message
+      ...FieldErrors
     }
     user {
-      id
-      username
-      fname
-      lname
-      createdAt
-      updatedAt
+      ...UserFields
     }
   }
 }

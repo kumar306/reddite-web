@@ -7,6 +7,8 @@ NextSSRApolloClient,
 SSRMultipartLink } from "@apollo/experimental-nextjs-app-support/ssr";
 import { onError } from "@apollo/client/link/error";
 import { useRouter } from "next/navigation";
+import { createFragmentRegistry } from "@apollo/client/cache";
+import { PostFieldsFragmentDoc, UserFieldsFragmentDoc } from "../__generated__/graphql";
 
 export interface ProviderProps {}
 
@@ -58,7 +60,8 @@ const makeClient = ():NextSSRApolloClient<NormalizedCacheObject> => {
                 }
               }
             }
-          }
+          },
+          fragments: createFragmentRegistry(PostFieldsFragmentDoc, UserFieldsFragmentDoc)
         }),
         link: 
             typeof window === "undefined" ? 
