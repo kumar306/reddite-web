@@ -8,4 +8,5 @@ fragment PostFields on Post {
     createdAt
     updatedAt
     textSlice
+    voteStatus
 }

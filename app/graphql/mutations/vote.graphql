@@ -1,3 +1,5 @@
 mutation Vote($input: VoteInput!) {
-  vote(input: $input)
+  vote(input: $input) {
+   ...PostFields
+  }
 }
