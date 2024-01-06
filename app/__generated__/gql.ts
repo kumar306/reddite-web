@@ -23,6 +23,7 @@ const documents = {
     "mutation Login($options: LoginInput!) {\n  login(options: $options) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      email\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}": types.LoginDocument,
     "mutation Logout {\n  logout\n}": types.LogoutDocument,
     "mutation Register($options: RegisterInput!) {\n  register(options: $options) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      email\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}": types.RegisterDocument,
+    "mutation UpdatePost($input: UpdatePostInput!) {\n  updatePost(input: $input) {\n    ...PostFields\n  }\n}": types.UpdatePostDocument,
     "mutation Vote($input: VoteInput!) {\n  vote(input: $input) {\n    ...PostFields\n  }\n}": types.VoteDocument,
     "query GetAllPosts($options: PaginationInput!) {\n  getAllPosts(options: $options) {\n    posts {\n      ...PostFields\n    }\n    hasMore\n  }\n}": types.GetAllPostsDocument,
     "query GetPost($getPostId: Float!) {\n  getPost(getPostId: $getPostId) {\n    ...PostFields\n    text\n  }\n}": types.GetPostDocument,
@@ -84,6 +85,10 @@ export function gql(source: "mutation Logout {\n  logout\n}"): (typeof documents
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "mutation Register($options: RegisterInput!) {\n  register(options: $options) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      email\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}"): (typeof documents)["mutation Register($options: RegisterInput!) {\n  register(options: $options) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      email\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "mutation UpdatePost($input: UpdatePostInput!) {\n  updatePost(input: $input) {\n    ...PostFields\n  }\n}"): (typeof documents)["mutation UpdatePost($input: UpdatePostInput!) {\n  updatePost(input: $input) {\n    ...PostFields\n  }\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
