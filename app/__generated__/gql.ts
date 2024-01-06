@@ -18,12 +18,14 @@ const documents = {
     "fragment UserFields on User {\n  id\n  username\n  email\n  fname\n  lname\n  createdAt\n  updatedAt\n}": types.UserFieldsFragmentDoc,
     "mutation ChangePassword($options: PasswordResetInput!) {\n  changePassword(options: $options) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      email\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}": types.ChangePasswordDocument,
     "mutation CreatePost($input: PostInput!) {\n  createPost(input: $input) {\n    id\n    title\n    text\n    author {\n      id\n      username\n      email\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n    points\n    createdAt\n    updatedAt\n  }\n}": types.CreatePostDocument,
+    "mutation DeletePost($deletePostId: Float!) {\n  deletePost(deletePostId: $deletePostId)\n}": types.DeletePostDocument,
     "mutation ForgotPassword($email: String!) {\n  forgotPassword(email: $email)\n}": types.ForgotPasswordDocument,
     "mutation Login($options: LoginInput!) {\n  login(options: $options) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      email\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}": types.LoginDocument,
     "mutation Logout {\n  logout\n}": types.LogoutDocument,
     "mutation Register($options: RegisterInput!) {\n  register(options: $options) {\n    errors {\n      field\n      message\n    }\n    user {\n      id\n      username\n      email\n      fname\n      lname\n      createdAt\n      updatedAt\n    }\n  }\n}": types.RegisterDocument,
     "mutation Vote($input: VoteInput!) {\n  vote(input: $input) {\n    ...PostFields\n  }\n}": types.VoteDocument,
     "query GetAllPosts($options: PaginationInput!) {\n  getAllPosts(options: $options) {\n    posts {\n      ...PostFields\n    }\n    hasMore\n  }\n}": types.GetAllPostsDocument,
+    "query GetPost($getPostId: Float!) {\n  getPost(getPostId: $getPostId) {\n    ...PostFields\n    text\n  }\n}": types.GetPostDocument,
     "query getUserDetails($username: String!) {\n  getUserDetails(username: $username) {\n    errors {\n      ...FieldErrors\n    }\n    user {\n      ...UserFields\n    }\n  }\n}": types.GetUserDetailsDocument,
     "query isLoggedIn {\n  isLoggedIn {\n    errors {\n      ...FieldErrors\n    }\n    user {\n      ...UserFields\n    }\n  }\n}": types.IsLoggedInDocument,
 };
@@ -65,6 +67,10 @@ export function gql(source: "mutation CreatePost($input: PostInput!) {\n  create
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function gql(source: "mutation DeletePost($deletePostId: Float!) {\n  deletePost(deletePostId: $deletePostId)\n}"): (typeof documents)["mutation DeletePost($deletePostId: Float!) {\n  deletePost(deletePostId: $deletePostId)\n}"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function gql(source: "mutation ForgotPassword($email: String!) {\n  forgotPassword(email: $email)\n}"): (typeof documents)["mutation ForgotPassword($email: String!) {\n  forgotPassword(email: $email)\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -86,6 +92,10 @@ export function gql(source: "mutation Vote($input: VoteInput!) {\n  vote(input: 
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "query GetAllPosts($options: PaginationInput!) {\n  getAllPosts(options: $options) {\n    posts {\n      ...PostFields\n    }\n    hasMore\n  }\n}"): (typeof documents)["query GetAllPosts($options: PaginationInput!) {\n  getAllPosts(options: $options) {\n    posts {\n      ...PostFields\n    }\n    hasMore\n  }\n}"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "query GetPost($getPostId: Float!) {\n  getPost(getPostId: $getPostId) {\n    ...PostFields\n    text\n  }\n}"): (typeof documents)["query GetPost($getPostId: Float!) {\n  getPost(getPostId: $getPostId) {\n    ...PostFields\n    text\n  }\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

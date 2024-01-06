@@ -25,19 +25,29 @@ export const Navbar:React.FC<NavbarProps> = () => {
         router.push('/home');
     }
 
+    const routeToCreatePost = () => {
+        router.push('/create-post');
+      }
+    
+
     return (
         <>
         {data && (
-             <Flex bg="teal" color={"white"} p={4} zIndex={1} top={0}>
+             <Flex bg="teal" color={"white"} p={4} zIndex={1} top={0} align={'center'}>
              <Box>
-                 <Text fontSize='lg'>REDDITE</Text>
+                 <Link href="/home">
+                    <Text cursor={'pointer'} fontSize={'3xl'} fontWeight={'bold'}>REDDITE</Text>
+                </Link>
              </Box>
              <Box ml="auto">
                  { data?.isLoggedIn.user ? 
                  (
-                     <Flex>     
-                         <Text fontSize='md' mr={4}>Hello {data.isLoggedIn.user.username}</Text>
-                         <Button size='md' color={'white'} bg={'red'} variant='ghost' onClick={handleLogout}>Logout</Button>
+                     <Flex align={'center'}>     
+                        <Text fontSize='md' mr={4}>Hello {data.isLoggedIn.user.username}</Text>
+                         <Box mr={4}>
+                            <Button onClick={routeToCreatePost}>Create Post</Button>
+                         </Box>
+                         <Button size='md' onClick={handleLogout}>Logout</Button>
                      </Flex>) : 
                  (
                      <Flex>

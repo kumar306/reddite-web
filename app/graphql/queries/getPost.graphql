@@ -1,0 +1,6 @@
+query GetPost($getPostId: Float!) {
+  getPost(getPostId: $getPostId) {
+    ...PostFields
+    text
+  }
+}
