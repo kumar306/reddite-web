@@ -1,17 +1,16 @@
 // home/page.tsx
 'use client';
 
-import Link from "next/link";
-import { DeletePostDocument, GetAllPostsDocument, GetPostDocument, IsLoggedInDocument } from "../__generated__/graphql";
+import { DeletePostDocument, GetAllPostsDocument, IsLoggedInDocument } from "../__generated__/graphql";
 import Layout from "../shared/layout";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { Box, Button, Flex, IconButton, Text } from "@chakra-ui/react";
-import { Card, CardBody, CardFooter, CardHeader } from "@chakra-ui/react";
+import { Card, CardBody, CardHeader } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { checkIsAuth } from "../lib/checkIsAuth";
 import { Vote } from "./vote";
-import { DeleteIcon } from "@chakra-ui/icons";
+import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 
 interface HomeProps { }
 
@@ -47,12 +46,19 @@ const Home:React.FC<HomeProps> = ({}) => {
     }
   });
 
+  const {data: loggedInUserData} = useQuery(IsLoggedInDocument);
+
   const deleteHandler = async(postId: number) => {
       await deletePost({
         variables: {
           deletePostId: postId
         }
       })
+  }
+
+  // have a query param edit:true to enable popup open as soon as page navigated
+  const editHandler = (postId: number) => {
+    router.push(`/post/${postId}?edit=true`);
   }
 
   const {data: getPostsData, loading: getPostsLoading, error: getPostsError, fetchMore: fetchMorePosts } = useQuery(GetAllPostsDocument, {
@@ -90,7 +96,7 @@ const Home:React.FC<HomeProps> = ({}) => {
                       <Vote post={post}></Vote>
                     </Box>
                     <Box flex={7} m={2} onClick={() => {
-                      router.push(`/post/${post.id}`);
+                      router.push(`/post/${post.id}`)
                     }} cursor={"pointer"}>
                       <CardHeader as='b'>{post.title}</CardHeader>
                       <CardBody>
@@ -99,11 +105,18 @@ const Home:React.FC<HomeProps> = ({}) => {
                         <Text>{post.textSlice}...</Text>
                       </CardBody>
                     </Box>
-                    <Box flex={2} my={4} p={4}>
-                      <IconButton aria-label="delete post" 
-                                  icon={<DeleteIcon />}
-                                  onClick={() => deleteHandler(post.id)}></IconButton>
-                    </Box>
+                       <Box flex={2} my={4} p={4}>
+                    { post.author.id == loggedInUserData?.isLoggedIn.user?.id ? (
+                       <>
+                       <IconButton aria-label="edit post" 
+                                   icon={<EditIcon />}
+                                   onClick={() => editHandler(post.id)} mr={2}></IconButton>
+                       <IconButton aria-label="delete post" 
+                                   icon={<DeleteIcon />}
+                                   onClick={() => deleteHandler(post.id)}></IconButton>
+                        </>
+                        ): null}      
+                     </Box>
                   </Flex>
                 </Card>
             ) 
