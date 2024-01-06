@@ -2,15 +2,16 @@
 'use client';
 
 import Link from "next/link";
-import { GetAllPostsDocument, IsLoggedInDocument } from "../__generated__/graphql";
+import { DeletePostDocument, GetAllPostsDocument, GetPostDocument, IsLoggedInDocument } from "../__generated__/graphql";
 import Layout from "../shared/layout";
 import { useEffect, useRef, useState } from "react";
-import { useQuery } from "@apollo/client";
-import { Box, Button, Flex, Text } from "@chakra-ui/react";
+import { useMutation, useQuery } from "@apollo/client";
+import { Box, Button, Flex, IconButton, Text } from "@chakra-ui/react";
 import { Card, CardBody, CardFooter, CardHeader } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { checkIsAuth } from "../lib/checkIsAuth";
 import { Vote } from "./vote";
+import { DeleteIcon } from "@chakra-ui/icons";
 
 interface HomeProps { }
 
@@ -23,6 +24,36 @@ const Home:React.FC<HomeProps> = ({}) => {
   // dont use let/const as those variables values dont persist across re-renders
 
   const router = useRouter();
+  const [deletePost, {data}] = useMutation(DeletePostDocument, {
+    update(cache, {data}) {
+
+      // return the id of the deleted post after delete mutation
+      // fetch the current posts present and remove this post from cache and return
+      // the cache update should be immutable so created a copy
+      
+      cache.modify({
+        fields: {
+            getAllPosts(existingPosts = [], { readField }) {
+                let existingPostsCopy = JSON.parse(JSON.stringify(existingPosts));
+                existingPostsCopy.posts = [];
+                existingPosts.posts.map((post: { "__ref": string }) => {
+                    if(post["__ref"] != `Post:${data?.deletePost}`) 
+                      existingPostsCopy.posts.push(post);
+                })
+                return existingPostsCopy;
+            }
+        }
+      })
+    }
+  });
+
+  const deleteHandler = async(postId: number) => {
+      await deletePost({
+        variables: {
+          deletePostId: postId
+        }
+      })
+  }
 
   const {data: getPostsData, loading: getPostsLoading, error: getPostsError, fetchMore: fetchMorePosts } = useQuery(GetAllPostsDocument, {
     variables: {
@@ -32,7 +63,6 @@ const Home:React.FC<HomeProps> = ({}) => {
       }
     },
     onCompleted: (data) => {
-      console.log(getPostsData);
       if(skip.current == 0) skip.current += limit.current
     }
   });
@@ -43,23 +73,10 @@ const Home:React.FC<HomeProps> = ({}) => {
   // triggers re-render and keeps going..
   // so use 'useRef' hook to prevent re-rendering of value that persists across renders
 
-  const routeToCreatePost = () => {
-    router.push('/create-post');
-  }
-
   checkIsAuth();
   
   return (
-    <Layout>
-      <Flex>
-        <Box>
-          <Text as='b' fontSize='4xl'>REDDITE</Text>
-        </Box>
-        <Box ml="auto">
-          <Button onClick={routeToCreatePost}>Create Post</Button>
-        </Box>
-      </Flex>
-    
+    <Layout>    
     { !getPostsData?.getAllPosts.posts ? (
       <p>Loading</p>
     ): (
@@ -68,18 +85,27 @@ const Home:React.FC<HomeProps> = ({}) => {
         {getPostsData?.getAllPosts.posts.map((post) => {    
               return (
                 <Card key={post.id} my={3}>
-                  <Flex> 
-                    <Vote post={post}></Vote>
-                    <Box m={2}>
-                      <CardHeader as='b'>{post.title}</CardHeader>                  
+                  <Flex flex={1}>
+                    <Box flex={1}>
+                      <Vote post={post}></Vote>
+                    </Box>
+                    <Box flex={7} m={2} onClick={() => {
+                      router.push(`/post/${post.id}`);
+                    }} cursor={"pointer"}>
+                      <CardHeader as='b'>{post.title}</CardHeader>
                       <CardBody>
                         <Text fontSize="sm">Posted by {post.author.username}</Text>
                         <br></br>
                         <Text>{post.textSlice}...</Text>
                       </CardBody>
                     </Box>
+                    <Box flex={2} my={4} p={4}>
+                      <IconButton aria-label="delete post" 
+                                  icon={<DeleteIcon />}
+                                  onClick={() => deleteHandler(post.id)}></IconButton>
+                    </Box>
                   </Flex>
-              </Card>
+                </Card>
             ) 
           }
         )}
@@ -97,7 +123,6 @@ const Home:React.FC<HomeProps> = ({}) => {
               },
            });
            skip.current = skip.current + limit.current;
-           console.log(getPostsData.getAllPosts);
           }}
           >Load More</Button>
          </Box>
