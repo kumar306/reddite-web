@@ -16,8 +16,13 @@ interface NavbarProps {
 export const Navbar:React.FC<NavbarProps> = () => {
 
     const { data, loading, error } = useQuery(IsLoggedInDocument); //query if user logged in
-    const [logout] = useMutation(LogoutDocument);
     const router = useRouter();
+    const [logout] = useMutation(LogoutDocument, {
+        update: () => {
+            router.refresh();
+        }
+    });
+   
     const handleLogout = async() => {
         const logoutResponse = await logout({
             refetchQueries: [IsLoggedInDocument]

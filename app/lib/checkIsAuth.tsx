@@ -9,7 +9,7 @@ export const checkIsAuth = () => {
     
     useEffect( () => {
         if(!loading && !data?.isLoggedIn.user) {
-            router.replace("/login?next=/create-post");
+            router.replace("/login?next=/home");
         }
     }, [data, loading, router])
 }
